@@ -1,6 +1,8 @@
 import express from "express";
 import bodyParser from 'body-parser'
 import cors from 'cors'
+import 'dotenv/config'
+
 const app = express()
 
 // parse application/x-www-form-urlencoded
@@ -9,7 +11,11 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 
-app.use(cors({origin:'http://localhost:3000'}))
+app.use(cors(
+    {
+        origin:[process.env.URI]
+    }
+))
 
 import createGraph from "./schedulinFunction/createGraph.js";
 import createDate from './schedulinFunction/createDate.js'
