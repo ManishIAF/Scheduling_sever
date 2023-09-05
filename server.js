@@ -9,11 +9,9 @@ const app = express()
 app.use(bodyParser.urlencoded({ extended: false }))
 
 // parse application/json
-console.log('process.env.URI : ',process.env.URI);
 app.use(bodyParser.json())
 app.use(cors(
     {
-        "Access-Control-Allow-Origin":"https://scheduling-lfjs.onrender.com",
         origin:process.env.URI,
         credentials: true,
         optionsSuccessStatus: 200,
