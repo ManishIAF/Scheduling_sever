@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(cors(
     {
-        origin:'*',
+        origin:'https://scheduling-lfjs.onrender.com',
         credentials: true,
         optionsSuccessStatus: 200,
         allowedHeaders:['Origin','X-Api-Key','X-Requested-With','Content-Type','Accept','Authorization'],
