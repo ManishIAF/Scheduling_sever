@@ -9,11 +9,11 @@ const app = express()
 app.use(bodyParser.urlencoded({ extended: false }))
 
 // parse application/json
+console.log('process.env.URI : ',process.env.URI);
 app.use(bodyParser.json())
-
 app.use(cors(
     {
-        origin:[process.env.URI],
+        origin:process.env.URI,
         credentials: true,
         optionsSuccessStatus: 200,
         allowedHeaders:['Origin','X-Api-Key','X-Requested-With','Content-Type','Accept','Authorization'],
