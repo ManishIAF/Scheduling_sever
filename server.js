@@ -29,7 +29,17 @@ app.post('/api/get_Graph',async(req,res)=>{
 
     const {data} = req.body;
 
-    const Graph = createGraph(data)
+    const Graph =await Promise((resolve,reject)=>{
+    
+        const Data = createGraph(data)
+    
+        if(Data){
+            resolve(Data);
+        }else{
+            reject(new Error("Failed to create Graph"))
+        }
+
+    })
 
     res.status(200).send(Graph)
 
@@ -39,11 +49,40 @@ app.post('/api/get_solution',async(req,res)=>{
 
     const {data:{start,end,TimeSlots,Graph,conflictingSlots}} = req.body;
 
-    const dateRange = await createDate(start,end)
+    const dateRange = await new Promise((resolve,reject)=>{
+        const data = createDate(start,end);
+        if(data){
+            resolve(data);
+        }else{
+            reject(new Error("Failed to create the Date"))
+        }
 
-    const {assignedColor , assignedSlots} = await graphColoring(Graph,dateRange,TimeSlots,conflictingSlots)
+    })
 
-    const solution = await Result(assignedColor,assignedSlots)
+    const {assignedColor , assignedSlots} = await new Promise((resolve,reject)=>{
+         
+        const data = graphColoring(Graph,dateRange,TimeSlots,conflictingSlots);
+        
+        if(data){
+            resolve(data)
+        }else{
+            reject(new Error("Failed to solve problem"))
+        }
+    
+    })
+    
+
+    const solution = await Promise(()=>{
+    
+        const data = Result(assignedColor,assignedSlots)
+    
+        if(data){
+            resolve(data)
+        }else{
+            reject(new Error("Failed to solve problem"))
+        }
+
+    })
 
     res.status(200).send(solution)
 
