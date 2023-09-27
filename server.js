@@ -25,68 +25,59 @@ import {graphColoring,Result} from './schedulinFunction/schedulingSolution.js'
 
 app.get('/',async(req,res)=>res.send('Home'))
 
-app.post('/api/get_Graph',async(req,res)=>{
-
-    const {data} = req.body;
-
-    const Graph =await Promise((resolve,reject)=>{
-    
-        const Data = createGraph(data)
-    
-        if(Data){
-            resolve(Data);
-        }else{
-            reject(new Error("Failed to create Graph"))
+app.post('/api/get_Graph', async (req, res) => {
+    try {
+      const { data } = req.body;
+  
+      // Create the graph
+      const Graph = await new Promise((resolve, reject) => {
+        const Data = createGraph(data);
+        if (Data) {
+          resolve(Data);
+        } else {
+          reject(new Error("Failed to create Graph"));
         }
+      });
+  
+      res.status(200).send(Graph);
+    } catch (error) {
+      res.status(500).send({ error: error.message });
+    }
+  });
+  
 
-    })
-
-    res.status(200).send(Graph)
-
-})
-
-app.post('/api/get_solution',async(req,res)=>{
-
-    const {data:{start,end,TimeSlots,Graph,conflictingSlots}} = req.body;
-
-    const dateRange = await new Promise((resolve,reject)=>{
-        const data = createDate(start,end);
-        if(data){
-            resolve(data);
-        }else{
-            reject(new Error("Failed to create the Date"))
+app.post('/api/get_solution', async (req, res) => {
+    try {
+      const { data: { start, end, TimeSlots, Graph, conflictingSlots } } = req.body;
+  
+      // Create the date range
+      const dateRange = await new Promise((resolve, reject) => {
+        const data = createDate(start, end);
+        if (data) {
+          resolve(data);
+        } else {
+          reject(new Error("Failed to create the Date"));
         }
-
-    })
-
-    const {assignedColor , assignedSlots} = await new Promise((resolve,reject)=>{
-         
-        const data = graphColoring(Graph,dateRange,TimeSlots,conflictingSlots);
-        
-        if(data){
-            resolve(data)
-        }else{
-            reject(new Error("Failed to solve problem"))
+      });
+  
+      // Perform graph coloring
+      const { assignedColor, assignedSlots } = await new Promise((resolve, reject) => {
+        const data = graphColoring(Graph, dateRange, TimeSlots, conflictingSlots);
+        if (data) {
+          resolve(data);
+        } else {
+          reject(new Error("Failed to solve problem"));
         }
-    
-    })
-    
-
-    const solution = await Promise(()=>{
-    
-        const data = Result(assignedColor,assignedSlots)
-    
-        if(data){
-            resolve(data)
-        }else{
-            reject(new Error("Failed to solve problem"))
-        }
-
-    })
-
-    res.status(200).send(solution)
-
-})
+      });
+  
+      // Generate the final solution
+      const solution = Result(assignedColor, assignedSlots);
+  
+      res.status(200).send(solution);
+    } catch (error) {
+      res.status(500).send({ error: error.message });
+    }
+  });
 
 app.listen(8000,(error)=>{
     if(error) console.log(error);
